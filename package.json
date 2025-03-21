@@ -2,7 +2,8 @@
   "name": "flappy-bird",
   "private": true,
   "version": "1.0.0",
-  "homepage": "https://<username>.github.io/<repository-name>",
+  "homepage": "https://rakesh-04.github.io/FlappyBird",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "react-scripts build",
