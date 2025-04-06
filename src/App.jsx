@@ -2,7 +2,7 @@
 import './tailwind-output.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Navbar } from './Components/Navbar';
-import Game from './Components/Game'; // Correct import for default export
+import Game from './Components/Game'; // Fix: Import Game as a default export
 import { Leaderboard } from './Components/Leaderboard';
 import { About } from './Components/About';
 

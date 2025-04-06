@@ -2,7 +2,7 @@
   "name": "flappy-bird",
   "private": true,
   "version": "1.0.0",
-  "homepage": "https://rakesh-04.github.io/FlappyBird",
+  "homepage": "https://rakesh-04.github.io/Flappy--bird",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -24,6 +24,7 @@
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.4.0",
     "react-router-hash-link": "^2.4.3",
+    "react-scripts": "^3.0.1",
     "tailwind-merge": "^3.0.2"
   },
   "devDependencies": {
