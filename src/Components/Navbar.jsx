@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
-import { HashLink } from 'react-router-hash-link';
+import { Link } from 'react-router-dom';
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,9 +24,9 @@ export const Navbar = () => {
           <div className="text-2xl sm:text-4xl font-bold text-gray-900">FlappyBird</div> {/* Adjusted font size */}
 
           <div className="hidden md:flex items-center space-x-8">
-            <HashLink to="/#Game" className="text-gray-700 hover:text-gray-900 text-xl sm:text-2xl">Game</HashLink> {/* Adjusted font size */}
-            <HashLink to="/#Leaderboard" className="text-gray-700 hover:text-gray-900 text-xl sm:text-2xl">Leaderboard</HashLink> {/* Adjusted font size */}
-            <HashLink to="/#About" className="text-gray-700 hover:text-gray-900 text-xl sm:text-2xl">About</HashLink> {/* Adjusted font size */}
+            <Link to="/game" className="text-gray-700 hover:text-gray-900 text-xl sm:text-2xl">Game</Link> {/* Adjusted font size */}
+            <Link to="/leaderboard" className="text-gray-700 hover:text-gray-900 text-xl sm:text-2xl">Leaderboard</Link> {/* Adjusted font size */}
+            <Link to="/about" className="text-gray-700 hover:text-gray-900 text-xl sm:text-2xl">About</Link> {/* Adjusted font size */}
         
           </div>
 
@@ -43,9 +43,9 @@ export const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden py-4 bg-white">
             <div className="flex flex-col space-y-4">
-              <HashLink to="/#Game" className="text-gray-700 hover:text-gray-900 text-xl">Game</HashLink> {/* Adjusted font size */}
-              <HashLink to="/#Leaderboard" className="text-gray-700 hover:text-gray-900 text-xl">Leaderboard</HashLink> {/* Adjusted font size */}
-              <HashLink to="/#About" className="text-gray-700 hover:text-gray-900 text-xl">About</HashLink> {/* Adjusted font size */}
+              <Link to="/game" className="text-gray-700 hover:text-gray-900 text-xl">Game</Link> {/* Adjusted font size */}
+              <Link to="/leaderboard" className="text-gray-700 hover:text-gray-900 text-xl">Leaderboard</Link> {/* Adjusted font size */}
+              <Link to="/about" className="text-gray-700 hover:text-gray-900 text-xl">About</Link> {/* Adjusted font size */}
 
             </div>
           </div>

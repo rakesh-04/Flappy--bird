@@ -21,6 +21,7 @@
     "motion": "^12.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^7.4.0",
     "react-router-hash-link": "^2.4.3",
     "tailwind-merge": "^3.0.2"
   },
