@@ -41,8 +41,8 @@ export const Navbar = () => {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden py-4 bg-white">
-            <div className="flex flex-col space-y-4">
+          <div className="md:hidden py-4 bg-white rounded-lg shadow-lg mt-2 bg-opacity-70 ">
+            <div className="flex flex-col space-y-4 pl-4 ml-2">
               <Link to="/game" className="text-gray-700 hover:text-gray-900 text-xl">Game</Link> {/* Adjusted font size */}
               <Link to="/leaderboard" className="text-gray-700 hover:text-gray-900 text-xl">Leaderboard</Link> {/* Adjusted font size */}
               <Link to="/about" className="text-gray-700 hover:text-gray-900 text-xl">About</Link> {/* Adjusted font size */}
