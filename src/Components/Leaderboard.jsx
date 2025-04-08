@@ -3,7 +3,7 @@ import React from 'react';
 
 export const Leaderboard = () => {
   return (
-    <div className="w-screen h-screen bg-cover bg-center  bg-blue-300 center">
+    <div className="w-screen h-screen bg-cover bg-center  bg-blue-300 ">
       <h1 className="text-gray-900 text-4xl font-bold p-4">Leaderboard</h1>
     </div>
   );

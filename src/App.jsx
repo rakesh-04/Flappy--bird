@@ -12,10 +12,12 @@ function App() {
       <div>
         <Navbar />
         <Routes>
+          <Route path="/" element={<Game />} /> {/* Default route */}
           <Route path="/game" element={<Game />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/about" element={<About />} />
         </Routes>
+
       </div>
     </Router>
   );
