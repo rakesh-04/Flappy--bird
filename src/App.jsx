@@ -1,6 +1,6 @@
 // filepath: c:\Users\user\Desktop\Flappy\flappy-bird\src\App.jsx
 import './tailwind-output.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navbar } from './Components/Navbar';
 import Game from './Components/Game'; // Fix: Import Game as a default export
 import { Leaderboard } from './Components/Leaderboard';
@@ -8,7 +8,7 @@ import { About } from './Components/About';
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter basename="/Flappy--bird">
       <div>
         <Navbar />
         <Routes>
@@ -17,9 +17,8 @@ function App() {
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/about" element={<About />} />
         </Routes>
-
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }
 

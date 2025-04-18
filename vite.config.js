@@ -8,4 +8,5 @@ export default defineConfig({
   server: {
     open: true,
   },
+  assetsInclude: ['**/*.mp3'], // Include .mp3 files as assets
 });

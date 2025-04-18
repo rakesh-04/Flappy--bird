@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import Bird from "./Bird";
 import Pillar from "./Pillar";
+import { Howl, Howler } from "howler";
 
 const GRAVITY = 0.8;
 const JUMP_HEIGHT = -12;
@@ -14,6 +15,29 @@ const FRAME_RATE = 16;
 
 function getRandomHeight() {
   return Math.floor(Math.random() * 200) + 100;
+}
+
+// Declare Howler sounds
+let backgroundMusic;
+let jumpSfx;
+let gameOverSfx;
+
+function initializeSounds() {
+  backgroundMusic = new Howl({
+    src: ["/Flappy--bird/audio/music.mp3"],
+    loop: true,
+    volume: 0.3,
+  });
+
+  jumpSfx = new Howl({
+    src: ["/Flappy--bird/audio/jump.mp3"],
+    volume: 0.5,
+  });
+
+  gameOverSfx = new Howl({
+    src: ["/Flappy--bird/audio/gameover.mp3"],
+    volume: 0.6,
+  });
 }
 
 function Game() {
@@ -29,36 +53,7 @@ function Game() {
   const [gameOver, setGameOver] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
 
-  const audioRef = useRef(new Audio("/audio/music.mp3"));
-  const jumpSound = useRef(new Audio("/audio/jump.mp3"));
-  const gameOverSound = useRef(new Audio("/audio/gameover.mp3"));
-
-  useEffect(() => {
-    audioRef.current.loop = true;
-    [audioRef, jumpSound, gameOverSound].forEach((ref) => ref.current.load());
-  }, []);
-
-  // Ensure music plays after restart
-  useEffect(() => {
-    const playMusic = async () => {
-      try {
-        const audio = audioRef.current;
-        if (!audio.paused) {
-          return; // Avoid calling play() if the audio is already playing
-        }
-        audio.currentTime = 0; // Reset the audio to the beginning
-        await audio.play();
-      } catch (err) {
-        console.warn("Music play failed on restart:", err);
-      }
-    };
-
-    if (gameStarted && !gameOver && !isMuted) {
-      playMusic();
-    }
-  }, [gameStarted, gameOver, isMuted]);
-
-  // Bird movement and gravity
+  // Bird physics
   useEffect(() => {
     if (!gameStarted || gameOver) return;
 
@@ -77,13 +72,13 @@ function Game() {
     return () => clearInterval(interval);
   }, [gameStarted, velocity, gameOver]);
 
-  // Pillar movement, collision, and scoring
+  // Pillars and collision detection
   useEffect(() => {
     if (!gameStarted || gameOver) return;
 
     const interval = setInterval(() => {
-      setPillars((prev) => {
-        const updated = prev.map((pillar) => {
+      setPillars((prev) =>
+        prev.map((pillar) => {
           let newX = pillar.xPos - 5;
           let newIsScored = pillar.isScored;
 
@@ -118,10 +113,8 @@ function Game() {
             xPos: newX,
             isScored: newIsScored,
           };
-        });
-
-        return updated;
-      });
+        })
+      );
     }, FRAME_RATE);
 
     return () => clearInterval(interval);
@@ -129,21 +122,35 @@ function Game() {
 
   const handleJump = () => {
     if (!gameStarted || gameOver) return;
+
+    // Resume audio context if suspended
+    if (Howler.ctx?.state === "suspended") {
+      Howler.ctx.resume().then(() => {
+        console.log("Audio context resumed on jump");
+      });
+    }
+
     if (!isMuted) {
-      jumpSound.current.currentTime = 0;
-      jumpSound.current.play().catch(() => {});
+      jumpSfx.play();
     }
     setVelocity(JUMP_HEIGHT);
   };
 
   const startGame = () => {
+    initializeSounds(); // Initialize sounds after user interaction
+
     setGameStarted(true);
-    if (!isMuted) {
-      audioRef.current.currentTime = 0; // Reset the music to the beginning
-      audioRef.current.play().catch((err) => {
-        console.warn("Music playback failed:", err);
-        alert("Please interact with the page to enable audio playback.");
+
+    // Resume audio context if suspended
+    if (Howler.ctx?.state === "suspended") {
+      Howler.ctx.resume().then(() => {
+        console.log("Audio context resumed");
       });
+    }
+
+    if (!isMuted && !backgroundMusic.playing()) {
+      backgroundMusic.stop(); // Ensure it's fresh
+      backgroundMusic.play();
     }
   };
 
@@ -157,33 +164,19 @@ function Game() {
       { id: 1, xPos: 400, height: getRandomHeight(), isScored: false, pairId: 1 },
       { id: 2, xPos: 700, height: getRandomHeight(), isScored: false, pairId: 2 },
     ]);
-    if (!audioRef.current.paused) {
-      audioRef.current.pause(); // Pause only if the audio is playing
-    }
-    audioRef.current.currentTime = 0; // Reset the audio to the beginning
+    backgroundMusic.stop();
   };
 
   const endGame = () => {
-    if (!isMuted) {
-      gameOverSound.current.currentTime = 0;
-      gameOverSound.current.play().catch(() => {});
-    }
-    if (!audioRef.current.paused) {
-      audioRef.current.pause(); // Pause only if the audio is playing
-    }
+    if (!isMuted) gameOverSfx.play();
+    backgroundMusic.stop();
     setGameOver(true);
   };
 
   const toggleMute = () => {
-    setIsMuted((prev) => {
-      const newMuted = !prev;
-      if (newMuted) {
-        audioRef.current.pause();
-      } else if (gameStarted && !gameOver) {
-        audioRef.current.play().catch(() => {});
-      }
-      return newMuted;
-    });
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
+    Howler.mute(newMuted);
   };
 
   return (
@@ -195,6 +188,18 @@ function Game() {
         handleJump();
       }}
     >
+      {/* Mute Button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleMute();
+        }}
+        className="absolute top-2 right-2 p-2 bg-black bg-opacity-40 rounded-full hover:bg-opacity-60 transition"
+      >
+        {isMuted ? <VolumeX className="text-white w-5 h-5 sm:w-6 sm:h-6" /> : <Volume2 className="text-white w-5 h-5 sm:w-6 sm:h-6" />}
+      </button>
+
+      {/* Start Game Overlay */}
       {!gameStarted && !gameOver && (
         <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-50 z-10">
           <button
@@ -207,6 +212,7 @@ function Game() {
         </div>
       )}
 
+      {/* Game Container */}
       <div
         className="relative w-full max-w-[400px] h-[80vh] max-h-[600px] overflow-hidden border-4 border-black bg-[url('/images/background-day.png')] bg-cover bg-center sm:w-[90%]"
         style={{ aspectRatio: "3 / 4" }}
@@ -219,17 +225,6 @@ function Game() {
         <div className="absolute top-2 left-2 text-white font-bold text-base sm:text-xl bg-black bg-opacity-40 px-2 rounded">
           Score: {score}
         </div>
-
-        <button
-          onClick={toggleMute}
-          className="absolute top-2 right-2 p-2 bg-black bg-opacity-40 rounded-full hover:bg-opacity-60 transition"
-        >
-          {isMuted ? (
-            <VolumeX className="text-white w-5 h-5 sm:w-6 sm:h-6" />
-          ) : (
-            <Volume2 className="text-white w-5 h-5 sm:w-6 sm:h-6" />
-          )}
-        </button>
 
         {gameOver && (
           <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-50">
